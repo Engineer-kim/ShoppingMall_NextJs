@@ -1,22 +1,27 @@
-import type { Metadata } from "next";
-import "@/assets/styles/globals.css";
+import Header from "@/components/shared/header";
+import Footer from "@/components/footer";
+import { Inter } from "next/font/google";
 
 
-export const metadata: Metadata = {
-  title: "Kim's Store",
-  description: "Ecommerce Platform Built with Next.js By K.H.J",
-};
+const inter = Inter({
+  subsets: ["latin"],
+});
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode; // React에서 렌더링 가능한 모든 것을 의미
+  children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen flex-col">
-      <main className="flex-1 wrapper">
-        {children}
-      </main>
-    </div>
+    <html lang='en' suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`}>
+        <div className='flex h-screen flex-col'>
+          <Header />
+          <main className='flex-1 wrapper'>{children}</main>
+          <Footer/>
+        </div>
+      </body>
+    </html>
   );
 }
