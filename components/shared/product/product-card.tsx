@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import ProductPrice from "./product-price";
 
 const ProductCard = ({product} :{product: any;}) => {
   return ( <Card className="w-full max-w-sm">
@@ -24,7 +25,8 @@ const ProductCard = ({product} :{product: any;}) => {
       <div className="flex-between gap-4">
         <p>Starts Count(평점) : {product.rating} </p>
         { product.stock > 0 ? (
-          <p className="font-bold text-green-500">{product.price}</p>
+          // <p className="font-bold text-green-500">{product.price}</p>
+          <ProductPrice value={Number(product.price)} className="font-bold" />
         ) : (
           <p className="font-bold text-red-500 text-destructive">재고 없음</p>
         )}
