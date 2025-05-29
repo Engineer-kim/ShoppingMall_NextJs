@@ -1,7 +1,8 @@
-# 사용 기술 스택
+# 사용 기술 스택 및 환경
 
 FrameWork: NextJs(TypeScript)
 DB: Prisma(ORM)
+DB는 Vercel(무료 호스팅 서비스) 을 통해 클라우드에 올라가있음
 
 # 서버 실행
 
