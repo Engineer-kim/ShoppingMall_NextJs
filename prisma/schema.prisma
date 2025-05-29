@@ -21,13 +21,13 @@ model Product {
   slug        String   @unique(map: "product_slug_idx")
   category    String
   images      String[]
-  brands      String
+  brand       String
   description String
   stock       Int
   price       Decimal  @default(0) @db.Decimal(12, 2) //최대 12자리, 소수점 2자리까지 표시
   rating      Decimal  @default(0) @db.Decimal(3, 2) //최대 3자리, 소수점 2자리까지 표시
   numReviews  Int      @default(0)
-  isFavorite  Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
   banner      String?
   createdAt   DateTime @default(now()) @db.Timestamp(6) //ex) now => 초까지 이고, db.Timestamp => 마이크로초 6자리
 
