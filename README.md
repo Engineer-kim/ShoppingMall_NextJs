@@ -47,3 +47,9 @@ npx tsx .(데이터밀어넣을 로직이 작성된 파일 경로) ex) npx tsx .
 # 주의점
 
 1. Prisma에 밀어넣을 데이터 컬럼명과 실 데이터의 이름이 같아야함 아니면 오류남
+
+# 기타 사항
+
+각 모델(DB 테이블 구조는 AUthJs 에서 거의 참고함)
+-AuthJs <br>
+https://authjs.dev/getting-started/adapters/prisma
