@@ -19,3 +19,13 @@ export function formatNumberWithDecimal(num: number): string {
   const [int, decimal] = num.toString().split('.');
   return decimal ? `${int}.${decimal.padEnd(2, '0')}` : `${int}.00`;
 }
+
+//리다이렉션 함수
+export function isRedirectError(error: unknown): boolean {
+  // digest는 NextJs에서 지정하는 속성중하나
+  // 에러는 기본적으로 알 수 없는 타입인 unkonwn(Any랑 다름)타입임
+  return (
+    typeof error === 'object' && error !== null && 'digest' in error &&
+    (error as { digest?: unknown }).digest === 'NEXT_REDIRECT'
+  );
+}
