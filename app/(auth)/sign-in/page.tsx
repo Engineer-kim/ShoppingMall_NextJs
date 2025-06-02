@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader ,CardTitle } from "@/com
 import Link from "next/link";
 import Image from "next/image";
 import { APP_NAME } from "@/lib/constants";
+import LoginForm from "./login-form";
 
 
 export const metadata: Metadata = {
@@ -20,8 +21,8 @@ const SignInPage = () => {
           <CardTitle className="text-center">로그인</CardTitle>
           <CardDescription className="text-center">로그인 해주세요</CardDescription>
         </CardHeader>
-        <CardContent className="text-center">
-          {<>로그인 Form 자리</>}
+        <CardContent className="space-y-4">
+          <LoginForm></LoginForm>
         </CardContent>
     </Card>
   </div>
