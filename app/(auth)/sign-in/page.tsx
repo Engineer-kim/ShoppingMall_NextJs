@@ -3,15 +3,30 @@ import { Card, CardContent, CardDescription, CardHeader ,CardTitle } from "@/com
 import Link from "next/link";
 import Image from "next/image";
 import { APP_NAME } from "@/lib/constants";
-import LoginForm from "./login-form";
+import CredentialsSignInForm from "./login-form"
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
 
 
 export const metadata: Metadata = {
   title: "로그인페이지",
 };
 
+const SignInPage = async (props: {
+  searchParams: Promise<{callbackUrl: string}>
+}) => {
 
-const SignInPage = () => {
+ const {callbackUrl} = await props.searchParams
+
+
+  const session = await auth(); //서버 측의 컴포넌트니까 useSession 과 같은 훅을 사용하지않고 미리 정의된 함수 호출함
+  if(session){
+    console.log("session", session)
+    return redirect(callbackUrl ||  "/");
+  }
+
+
   return <div className="w-full max-w-md mx-auto">
     <Card>
         <CardHeader className="space-y-4">
@@ -22,7 +37,7 @@ const SignInPage = () => {
           <CardDescription className="text-center">로그인 해주세요</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <LoginForm></LoginForm>
+          <CredentialsSignInForm></CredentialsSignInForm>
         </CardContent>
     </Card>
   </div>
