@@ -14,15 +14,17 @@ const RegisterForm = () => {
   const [data, action] = useActionState(siginUpUser, {
     success: false,
     message: '',
+    fieldErrors: {}
   });
 
-  console.log("data::::::" , data)
+  // console.log("data::::::" , data)
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
+  console.log("data 상태:", data);
+
   const RegisterButton = () => {
     const { pending } = useFormStatus();
-
     return (
       <Button disabled={pending} className='w-full' variant='default'>
         {pending ? '회원가입 진행중...' : '회원가입'}
@@ -30,6 +32,9 @@ const RegisterForm = () => {
     );
   };
   
+  const fieldErrors = data?.fieldErrors || {};
+  const errorMessage = data?.message || null;
+
   return (
     <form action={action}>
       <input type='hidden' name='callbackUrl' value={callbackUrl} />
@@ -40,21 +45,25 @@ const RegisterForm = () => {
             id='name'
             name='name'
             type='text'
-            required
             autoComplete='name'
-            defaultValue={registerDefaultValues.email}
+            defaultValue={registerDefaultValues.name}
           />
+          {fieldErrors.name && (
+            <p className='text-red-500 text-sm mt-1'>{fieldErrors.name}</p>
+          )}
         </div>
         <div>
           <Label htmlFor='email'>E-Mail</Label>
           <Input
             id='email'
             name='email'
-            type='email'
-            required
+            type='text'
             autoComplete='email'
             defaultValue={registerDefaultValues.email}
           />
+           {fieldErrors.email && (
+            <p className='text-red-500 text-sm mt-1'>{fieldErrors.email}</p>
+          )}
         </div>
         <div>
           <Label htmlFor='password'>패스워드</Label>
@@ -66,6 +75,9 @@ const RegisterForm = () => {
             autoComplete='password'
             defaultValue={registerDefaultValues.password}
           />
+          {fieldErrors.password && (
+            <p className='text-red-500 text-sm mt-1'>{fieldErrors.password}</p>
+          )}
         </div>
         <div>
           <Label htmlFor='confirmPassword'>패스워드 재확인</Label>
@@ -75,17 +87,22 @@ const RegisterForm = () => {
             type='password'
             required
             autoComplete='password'
-            defaultValue={registerDefaultValues.password}
+            defaultValue={registerDefaultValues.confirmPassword}
           />
+          {fieldErrors.confirmPassword && (
+            <p className='text-red-500 text-sm mt-1'>{fieldErrors.confirmPassword}</p>
+          )}
         </div>
         <div>
           <RegisterButton />
         </div>
 
-        {data && !data.success && (
+        {/* {data && !data.success && (
           <div className='text-center text-destructive'>{data.message}</div>
+        )} */}
+         {errorMessage && !data.success && !Object.keys(fieldErrors).length && (
+          <div className='text-center text-red-500 text-sm mt-2'>{errorMessage}</div>
         )}
-
         <div className='text-sm text-center text-muted-foreground'>
           이미 계정을 만드셨나요?{' '}
           <Link href='/sign-in' target='_self' className='link text-blue-500'>
@@ -96,5 +113,6 @@ const RegisterForm = () => {
     </form>
   );
 };
+
 
 export default RegisterForm;
