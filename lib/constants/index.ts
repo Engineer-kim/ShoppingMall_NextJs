@@ -9,3 +9,11 @@ export const logiInDefaultValues = {
   email: "",
   password: "",
 };
+
+//회원 가입폼에서의 기본값 설정
+export const registerDefaultValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: ""
+};

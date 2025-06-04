@@ -3,15 +3,15 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { logiInDefaultValues } from '@/lib/constants'
+import { registerDefaultValues } from '@/lib/constants'
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { signInWithCredentials } from '@/lib/actions/user.action';
+import { siginUpUser } from '@/lib/actions/user.action';
 import { useSearchParams } from 'next/navigation';
 
-const LoginForm = () => {
-  const [data, action] = useActionState(signInWithCredentials, {
+const RegisterForm = () => {
+  const [data, action] = useActionState(siginUpUser, {
     success: false,
     message: '',
   });
@@ -20,12 +20,12 @@ const LoginForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
-  const SignInButton = () => {
+  const RegisterButton = () => {
     const { pending } = useFormStatus();
 
     return (
       <Button disabled={pending} className='w-full' variant='default'>
-        {pending ? '로그인 중...' : '로그인'}
+        {pending ? '회원가입 진행중...' : '회원가입'}
       </Button>
     );
   };
@@ -35,6 +35,17 @@ const LoginForm = () => {
       <input type='hidden' name='callbackUrl' value={callbackUrl} />
       <div className='space-y-6'>
         <div>
+          <Label htmlFor='name'>성명</Label>
+          <Input
+            id='name'
+            name='name'
+            type='text'
+            required
+            autoComplete='name'
+            defaultValue={registerDefaultValues.email}
+          />
+        </div>
+        <div>
           <Label htmlFor='email'>E-Mail</Label>
           <Input
             id='email'
@@ -42,7 +53,7 @@ const LoginForm = () => {
             type='email'
             required
             autoComplete='email'
-            defaultValue={logiInDefaultValues.email}
+            defaultValue={registerDefaultValues.email}
           />
         </div>
         <div>
@@ -53,11 +64,22 @@ const LoginForm = () => {
             type='password'
             required
             autoComplete='password'
-            defaultValue={logiInDefaultValues.password}
+            defaultValue={registerDefaultValues.password}
           />
         </div>
         <div>
-          <SignInButton />
+          <Label htmlFor='confirmPassword'>패스워드 재확인</Label>
+          <Input
+            id='confirmPassword'
+            name='confirmPassword'
+            type='password'
+            required
+            autoComplete='password'
+            defaultValue={registerDefaultValues.password}
+          />
+        </div>
+        <div>
+          <RegisterButton />
         </div>
 
         {data && !data.success && (
@@ -65,9 +87,9 @@ const LoginForm = () => {
         )}
 
         <div className='text-sm text-center text-muted-foreground'>
-          계정이 없으신가요?{' '}
-          <Link href='/sign-up' target='_self' className='link text-blue-500'>
-            회원가입
+          이미 계정을 만드셨나요?{' '}
+          <Link href='/sign-in' target='_self' className='link text-blue-500'>
+            로그인
           </Link>
         </div>
       </div>
@@ -75,4 +97,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
