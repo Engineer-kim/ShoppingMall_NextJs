@@ -27,11 +27,6 @@ export async function signInWithCredentials(
 
 //사용자 로그아웃시 호출될 함수
 export async function signOutUser() {
-  try {
     await signOut();
-    return { success: true, message: '로그아웃되었습니다' };
-  } catch (error) {
-    console.error('로그아웃 중 오류가 발생했습니다:', error);
-  }
 }
 
