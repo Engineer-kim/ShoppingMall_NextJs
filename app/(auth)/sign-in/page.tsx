@@ -22,7 +22,6 @@ const SignInPage = async (props: {
 
   const session = await auth(); //서버 측의 컴포넌트니까 useSession 과 같은 훅을 사용하지않고 미리 정의된 함수 호출함
   if(session){
-    console.log("session", session)
     return redirect(callbackUrl ||  "/");
   }
 

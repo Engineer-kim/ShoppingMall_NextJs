@@ -51,17 +51,36 @@ export const config = {
     }),
   ],
   callbacks: {
+    //Session 함수는 토큰의 정보를 세션에 담아서 클라이언트 어느곳에서도 쉽게 호출가능(세션 객체 구성)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({session, user,  trigger, token} : any) {
+    async session({session, trigger, token} : any) {
       session.user.id = token.sub //클라이언트 측에서 이 세션이 누구 건지 알기 위함(내부적으로 사용하는 고유 식별자)
-      if(trigger === 'update') {
-        session.user.name = user.name
+      session.user.name = token.name;
+      session.user.role = token.role;
+      if (trigger === 'update' && token.name) {
+        session.user.name = token.name;
       }
-
       return session
     },
-  }
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user, trigger, session }: any) {
+          if (user) {
+            token.role = user.role;
+            if (user.name === 'NO_NAME') {
+              //이름이 없을경우 (구글 로그인과 같은 Oauth 일때는 이름이 없엄) 이메일의 앞자리를 이름을 ex) admin@admin.com => admin 이 이름으로
+              token.name = user.email!.split('@')[0];
+              await prisma.user.update({
+                where: { id: user.id },
+                data: { name: token.name },
+              });
+            }
+          }
+          if (session?.user.name && trigger === 'update') {
+            token.name = session.user.name;
+          }
+          return token;
+        },
+      }
 } satisfies NextAuthConfig //타입 지정
 
 
