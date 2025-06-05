@@ -4,7 +4,7 @@ import { signInFormSchema, signUpFormSchema } from '@/lib/validator';
 import {signIn , signOut} from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { prisma } from '@/db/prisma';
-import { hashSync } from 'bcrypt-ts-edge';
+import { hash } from '../encypt';
 import { formatError } from '../utils';
  
 //사용자 로그인시 호출될 함수
@@ -61,7 +61,7 @@ export async function siginUpUser(prevState: unknown , formData: FormData) : Pro
 
     const noEncryptPassword = user.password
 
-    user.password = hashSync(user.password, 10)
+    user.password = await hash(user.password)
 
     await prisma.user.create({
       data:{

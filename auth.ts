@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/db/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { compareSync } from 'bcrypt-ts-edge';
+import { compare } from './lib/encypt'
 import type { NextAuthConfig } from 'next-auth';
 
 
@@ -31,10 +31,11 @@ export const config = {
           },
         })
         if (user && user.password) { //해당 유저가 있고 , 해당 유저의 비밀번호가 존재할 때
-          const isMatch = compareSync( //암호화된 비밀번호와 입력된 비밀번호를 암호화해서 비교
+          const isMatch = await compare( //암호화된 비밀번호와 입력된 비밀번호를 암호화해서 비교
             credentials.password as string,
             user.password
           )
+          //console.log("isMatch::::::::" + isMatch) 
           if (isMatch) {
             return {
               id: user.id,
