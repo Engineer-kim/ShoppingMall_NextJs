@@ -37,3 +37,24 @@ export const signUpFormSchema = z.object({
   message:"입력하신 패스워드가 일치 하지 않습니다.",
   path: ['confirmPassword']
 })
+
+//장바구니
+export const cartItemSchema = z.object({
+  productId: z.string().min(1, '상품아이디는 필수입니다'),
+  name: z.string().min(1, '상품명을 입력해주세요'),
+  slug: z.string().min(1, '상품의 식별명은 필수입니다'),
+  qty: z.number().int().nonnegative('물건의 수량은 0 이상이여야합니다'),
+  image: z.string().min(1, '상품의 이미지를 입력해주세요'),
+  price: currency
+});
+
+//장바구니 물품 추가시(인서트시)
+export const insertCartSchema = z.object({
+  items: z.array(cartItemSchema),
+  itemsPrice: currency,
+  totalPrice: currency,
+  shippingPrice: currency,
+  taxPrice: currency,
+  sessionCartId: z.string().min(1, '세션 카트아이디의 값은 필수입니다'),
+  userId: z.string().optional().nullable(), //로그인 없이도 카트에 담을수 있도록
+});
