@@ -137,3 +137,52 @@ export async function getMyCart() {
     })
 
 }
+
+//장바구니 상품 목록 제거
+export async function removeItemFromCart (productId: string) {
+  try {
+    //CartSession ID 가져오기
+    const sessionCartId = (await cookies()).get('sessionCartId')?.value;
+    if (!sessionCartId) throw new Error('Session 카트아이디가 없습니다');
+
+    //지우고자하는 상품아이디로 상품 있는지 체크
+    const product = await prisma.product.findFirst({
+      where: { id: productId },
+    });
+    if (!product) throw new Error('해당 상품은 존재하지 않습니다');
+
+    //사용자 장바구니 가져오기
+    const cart = await getMyCart();
+    if (!cart) throw new Error('장바구니 정보가 없습니다');
+
+    //해당 상품이 장바구니 상품목록에 있는지 체크
+    const exist = (cart.items as CartItem[]).find((cartItem) => cartItem.productId === productId);
+    if (!exist) throw new Error('해당 상품은 장바구니에 없는디요?');
+
+
+    //장바구니에 담긴 상품 수량이 1일때
+    if (exist.qty === 1) {
+      //filter 함수는 False면 제거 , True면 남김
+      cart.items = (cart.items as CartItem[]).filter((cartItem) => cartItem.productId !== exist.productId);
+    } else {//장바구니에 담긴 상품 수량 감소
+      (cart.items as CartItem[]).find((cartItem) => cartItem.productId === productId)!.qty = exist.qty - 1;
+    }
+    //수량 감소 연산 결과 DB 반영
+     await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        items: cart.items as Prisma.CartUpdateitemsInput[],
+        ...calulatePrice(cart.items as CartItem[]),
+      },
+    });
+    //DB 반영된 결과 화면에 데이터 최신화해서 뿌려주기 위함(캐시 날림)
+    revalidatePath(`/product/${product.slug}`);
+
+    return {
+      success: true,
+      message: `${product.name}  ${(cart.items as CartItem[]).find((x) => x.productId === productId) ? '장바구니 목록 업데이트 중' : '장바구니 목록에서 제거 완'}`,
+    };
+  }catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+};
