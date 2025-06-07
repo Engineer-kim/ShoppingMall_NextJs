@@ -1,13 +1,14 @@
 'use client'
 
-import { CartItem } from "@/types"
+import { Cart, CartItem } from "@/types"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { addItemToCart } from "@/lib/actions/cart.actions"
+import { Plus , Minus } from "lucide-react"
+import { addItemToCart , removeItemFromCart } from "@/lib/actions/cart.actions"
 import { FormattedErrorResult } from '@/lib/utils'
 
-const AddCart = ({ item }: { item: Omit<CartItem, 'cartId'> }) => {
+const AddCart = ({ cart ,item }: { cart?:Cart; item: Omit<CartItem, 'cartId'> }) => {
   const router = useRouter()
 
   const handleAddToCart = async () => {
@@ -38,11 +39,38 @@ const AddCart = ({ item }: { item: Omit<CartItem, 'cartId'> }) => {
     );
   }
 
-  return (
-    <Button className="w-full" type="button" onClick={handleAddToCart}>
-      장바구니 추가
+  const handleRemoveFromCart = async () => {
+    await removeItemFromCart(item.productId)
+
+    toast(
+      <div className="bg-blue-600 text-white px-5 py-3 rounded-full bg-opacity-90">
+        {`장바구니에서 ${item.name}을(를) 뺐어요!`}
+      </div>
+    );
+    return;
+  }
+
+
+  //해당 상품이 존재하는지 채크
+  const existItem = cart && cart.items.find((cartItem)=>(cartItem.productId === item.productId))
+
+  return existItem 
+  ? (
+    <div>
+      <Button type="button" variant='outline' onClick={handleRemoveFromCart}>
+        <Minus className="h-4 w-4"/>
+      </Button>
+      <span className="px-2">{existItem.qty}</span>
+      <Button type="button" variant='outline' onClick={handleAddToCart}>
+        <Plus className="h-4 w-4"/>
+      </Button>
+    </div>
+  ) 
+  : (
+     <Button className="w-full" type="button" onClick={handleAddToCart}>
+      <Plus/>장바구니 추가
     </Button>
-  )
+  );
 }
 
 export default AddCart
