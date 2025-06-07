@@ -20,7 +20,7 @@ export function formatNumberWithDecimal(num: number): string {
   return decimal ? `${int}.${decimal.padEnd(2, '0')}` : `${int}.00`;
 }
 
-type FormattedErrorResult = {
+export type FormattedErrorResult = {
   fieldErrors: { [key: string]: string }; //에러가 발생한 인풋(어떤 인풋값이 오류인지)
   errorMessage: string; //에러 메세지
 };

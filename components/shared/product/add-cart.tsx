@@ -5,19 +5,20 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { addItemToCart } from "@/lib/actions/cart.actions"
+import { FormattedErrorResult } from '@/lib/utils'
 
 const AddCart = ({ item }: { item: Omit<CartItem, 'cartId'> }) => {
   const router = useRouter()
 
   const handleAddToCart = async () => {
   const response = await addItemToCart(item)
-
-
+ 
   // 장바구니 추가 실패 시 toast 띄우기
   if (!response.success) {
+    const errorResult  = (await response.message) as FormattedErrorResult;
     toast(
       <div className="bg-red-600 text-white px-4 py-2 rounded">
-        {response.message}
+        {errorResult.errorMessage}
       </div>
     );
     return;
