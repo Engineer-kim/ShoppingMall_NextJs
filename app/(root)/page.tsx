@@ -6,7 +6,6 @@ import ProductBanner from "@/components/shared/product/product-banner";
 const Homepage = async () => {
   const latestProductData = await getLatestProducts();
   const bannerProductData = await getFeaturedProducts();
-  console.log("bannerProductData:", bannerProductData);
   return (
     <div>
       { bannerProductData.length > 0  && <ProductBanner data={bannerProductData}/>}

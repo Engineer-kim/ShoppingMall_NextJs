@@ -15,8 +15,6 @@ const LoginForm = () => {
     success: false,
     message: '',
   });
-
-  console.log("data::::::" , data)
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 

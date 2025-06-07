@@ -21,7 +21,7 @@ const RegisterForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
-  console.log("data 상태:", data);
+
 
   const RegisterButton = () => {
     const { pending } = useFormStatus();

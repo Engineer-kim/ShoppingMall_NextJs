@@ -57,3 +57,16 @@ export async function formatError(error: any): Promise<FormattedErrorResult>{
     return { fieldErrors: {}, errorMessage: errorMessage };
   }
 }
+
+
+//반올림함수
+export function round2(value: number| string) {
+  if (typeof value === 'number'){
+    //EPSILON 사용 하는이유: 외화일경우 소수점 표현시 정밀도 Upgrade 목적
+    return Math.round((value + Number.EPSILON) * 100) / 100 ;
+  }else if (typeof value === 'string'){
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100 ;
+  }else {
+    throw new Error('Value is not a number or string')
+  }
+}

@@ -4,7 +4,7 @@ import { prisma } from '@/db/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from './lib/encypt'
 import type { NextAuthConfig } from 'next-auth';
-
+import { NextResponse } from 'next/server';
 
 export const config = {
   pages: {
@@ -52,36 +52,57 @@ export const config = {
     }),
   ],
   callbacks: {
-    //Session 함수는 토큰의 정보를 세션에 담아서 클라이언트 어느곳에서도 쉽게 호출가능(세션 객체 구성)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({session, trigger, token} : any) {
-      session.user.id = token.sub //클라이언트 측에서 이 세션이 누구 건지 알기 위함(내부적으로 사용하는 고유 식별자)
-      session.user.name = token.name;
-      session.user.role = token.role;
-      if (trigger === 'update' && token.name) {
+      //Session 함수는 토큰의 정보를 세션에 담아서 클라이언트 어느곳에서도 쉽게 호출가능(세션 객체 구성)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async session({session, trigger, token} : any) {
+        session.user.id = token.sub //클라이언트 측에서 이 세션이 누구 건지 알기 위함(내부적으로 사용하는 고유 식별자)
         session.user.name = token.name;
-      }
-      return session
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user, trigger, session }: any) {
-          if (user) {
-            token.role = user.role;
-            if (user.name === 'NO_NAME') {
-              //이름이 없을경우 (구글 로그인과 같은 Oauth 일때는 이름이 없엄) 이메일의 앞자리를 이름을 ex) admin@admin.com => admin 이 이름으로
-              token.name = user.email!.split('@')[0];
-              await prisma.user.update({
-                where: { id: user.id },
-                data: { name: token.name },
-              });
+        session.user.role = token.role;
+        if (trigger === 'update' && token.name) {
+          session.user.name = token.name;
+        }
+        return session
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async jwt({ token, user, trigger, session }: any) {
+            if (user) {
+              token.role = user.role;
+              if (user.name === 'NO_NAME') {
+                //이름이 없을경우 (구글 로그인과 같은 Oauth 일때는 이름이 없엄) 이메일의 앞자리를 이름을 ex) admin@admin.com => admin 이 이름으로
+                token.name = user.email!.split('@')[0];
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: { name: token.name },
+                });
+              }
             }
+            if (session?.user.name && trigger === 'update') {
+              token.name = session.user.name;
+            }
+            return token;
+          },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      authorized({ request }: any) {
+          if(!request.cookies.get('sessionCartId')){
+            //세션카트아이디(로그인여부와 관련없이 담은 상품에 대한 아이디) 생성
+            const sessionCartId = crypto.randomUUID();
+            console.log("sessionCartId::" , sessionCartId)
+            //새로운 헤더 생성
+            const newRequestHeaders = new Headers(request.headers)
+
+            const response = NextResponse.next({
+              request:{
+                headers: newRequestHeaders,
+              }
+            })
+            //세션카트아이디를 쿠키에 포함시키기
+            response.cookies.set('sessionCartId', sessionCartId);
+            return response
+          }else{
+            return true
           }
-          if (session?.user.name && trigger === 'update') {
-            token.name = session.user.name;
-          }
-          return token;
-        },
       }
+    }
 } satisfies NextAuthConfig //타입 지정
 
 

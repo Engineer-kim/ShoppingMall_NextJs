@@ -9,8 +9,6 @@ import AddCart from "@/components/shared/product/add-cart";
 
 const ProductDetailsPage = async (props: {params: Promise<{ slug: string }>; }) => {
   const params = await props.params;
-  console.log("params:", params);
-  console.log("props:", props);
   const { slug } = params;
 
   const product = await getProductBySlug(slug);
